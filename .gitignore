@@ -1,0 +1,13 @@
+.env
+.rspec
+
+content/
+.idea/*
+.vscode/
+
+temp/
+log/
+
+tmp/
+
+.bundle/
