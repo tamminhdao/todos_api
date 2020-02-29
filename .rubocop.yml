@@ -1,0 +1,26 @@
+AllCops:
+  Exclude:
+    - bin/*
+    - db/*
+    - db/migrate/*
+    - db/seeds/*
+    - Guardfile
+    - spec/factories/*
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/MutableConstant:
+  Enabled: false
+
+Metrics/BlockLength:
+  Enabled: false
+
+Metrics/LineLength:
+  Max: 125
+
+Metrics/MethodLength:
+  Max: 20
+
+Style/Documentation:
+  Enabled: false

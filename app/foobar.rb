@@ -1,2 +1,0 @@
-class Foobar
-end
