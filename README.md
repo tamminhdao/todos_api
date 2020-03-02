@@ -7,6 +7,9 @@ This is a Ruby API backend written with Sinatra & ActiveRecord
 1. Clone the project
 1. Run `bundle install`
 
+## Run the app
+`rackup -p 3456`
+
 ## Testing
 
 1. Run `bundle exec rspec -fd` for a single run.

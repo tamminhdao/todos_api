@@ -14,8 +14,8 @@ gem 'sinatra-activerecord', '~> 2.0', '>= 2.0.14'
 gem 'sinatra-contrib', '~> 2.0', '>= 2.0.8.1'
 
 group :development do
-  gem 'rubocop', '~> 0.71.0', require: false
   gem 'guard-rspec', '4.7.3'
+  gem 'rubocop', '~> 0.71.0', require: false
 end
 
 group :test, :development do
