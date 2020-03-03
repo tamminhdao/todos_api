@@ -1,8 +1,12 @@
 ENV['RACK_ENV'] = 'test'
 
 require 'database_cleaner/active_record'
+require 'dotenv'
+
+Dotenv.load('./.env.test')
 
 Dir['./app/controllers/*.rb'].each { |f| require f }
+Dir['./lib/*.rb'].each { |f| require f }
 
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 RSpec.configure do |config|

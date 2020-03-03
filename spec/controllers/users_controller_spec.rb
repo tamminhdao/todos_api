@@ -5,6 +5,7 @@ require 'bcrypt'
 RSpec.describe UsersController do
   include Rack::Test::Methods
   include BCrypt
+  include Authentication
 
   def app
     UsersController.new
@@ -21,12 +22,15 @@ RSpec.describe UsersController do
     it 'signs up a new user' do
       # GIVEN valid signup information
       # WHEN new signup request is submitted
-      # THEN server  returns http status code 201 (Created)
+      # THEN server  returns http status code 201 (Created) and valid JWT tokens in json response
 
       post '/signup', params.to_json
 
+      json_response = JSON.parse(last_response.body)
+
       expect(last_response.status).to eq(201)
-      expect(last_response.body).to eq({ user: { username: 'test_user' } }.to_json)
+      expect(json_response['access_token']).to_not be_nil
+      expect(json_response['refresh_token']).to_not be_nil
     end
 
     it 'does not create user with incomplete infomation' do
@@ -64,7 +68,7 @@ RSpec.describe UsersController do
     end
 
     context 'when a user does not exist' do
-      it 'responses with a 404 and an error message' do
+      it 'responses with a 401 and an error message' do
         post '/login', params.to_json
 
         expect(last_response.status).to eq(401)
@@ -75,7 +79,7 @@ RSpec.describe UsersController do
     context 'when logging in with the wrong password' do
       let!(:user) { User.create!(username: 'user_one', password: wrong_password) }
 
-      it 'responses with a 404 and an error message' do
+      it 'responses with a 401 and an error message' do
         post '/login', params.to_json
 
         expect(last_response.status).to eq(401)
@@ -89,7 +93,41 @@ RSpec.describe UsersController do
       it 'responses with a 200 and the validated user' do
         post '/login', params.to_json
 
+        json_response = JSON.parse(last_response.body)
+
         expect(last_response.status).to eq(200)
+        expect(json_response['access_token']).to_not be_nil
+        expect(json_response['refresh_token']).to_not be_nil
+      end
+    end
+  end
+
+  context 'GET /me' do
+    let(:params) do
+      {
+        username: 'current_user',
+        password: 'current_pass'
+      }
+    end
+    let(:encoded_jwt) { access_token('current_user') }
+
+    before(:each) do
+      post '/login', params.to_json
+    end
+
+    it 'returns the current user information' do
+      get '/me', nil, 'HTTP_AUTHORIZATION' => "Bearer #{encoded_jwt}"
+
+      expect(last_response.status).to eq(200)
+      expect(last_response.body).to eq({ user: { 'username': 'current_user' } }.to_json)
+    end
+
+    context 'when missing authorization header' do
+      it 'returns a 401 and error message' do
+        get '/me'
+
+        expect(last_response.status).to eq(401)
+        expect(last_response.body).to include('A token must be passed')
       end
     end
   end

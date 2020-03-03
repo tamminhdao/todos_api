@@ -1,6 +1,6 @@
-# Todos API
+# Todo List
 
-This is a Ruby API backend written with Sinatra & ActiveRecord
+This is a Ruby API built with Sinatra & ActiveRecord, following [JWTs](https://jwt.io/introduction/) standard for authentication.
 
 ## Setup
 
@@ -8,6 +8,7 @@ This is a Ruby API backend written with Sinatra & ActiveRecord
 1. Run `bundle install`
 
 ## Run the app
+
 `rackup -p 3456`
 
 ## Testing
