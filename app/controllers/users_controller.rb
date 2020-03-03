@@ -1,6 +1,5 @@
 require 'sinatra/json'
 require 'json'
-
 require_relative '../todos'
 
 class UsersController < ApplicationController
@@ -30,5 +29,18 @@ class UsersController < ApplicationController
         username: user.username
       }
     )
+  end
+
+  post '/login' do
+    params = JSON.parse(request.body.read)
+    user = User.find_by(username: params['username'])
+    has_correct_password = check_password(user.password, params['password']) if user
+
+    unless user && has_correct_password
+      status 401
+      return json('error': 'Invalid username or password')
+    end
+
+    status 200
   end
 end

@@ -1,8 +1,10 @@
 require 'spec_helper'
 require 'rack/test'
+require 'bcrypt'
 
 RSpec.describe UsersController do
   include Rack::Test::Methods
+  include BCrypt
 
   def app
     UsersController.new
@@ -48,6 +50,47 @@ RSpec.describe UsersController do
 
       expect(last_response.status).to eq(409)
       expect(last_response.body).to include('Username test_user already taken')
+    end
+  end
+
+  context 'POST /login' do
+    let(:password_digest) { BCrypt::Password.create('mypass') }
+    let(:wrong_password) { BCrypt::Password.create('wrongpass') }
+    let(:params) do
+      {
+        username: 'user_one',
+        password: 'mypass'
+      }
+    end
+
+    context 'when a user does not exist' do
+      it 'responses with a 404 and an error message' do
+        post '/login', params.to_json
+
+        expect(last_response.status).to eq(401)
+        expect(last_response.body).to include('Invalid username or password')
+      end
+    end
+
+    context 'when logging in with the wrong password' do
+      let!(:user) { User.create!(username: 'user_one', password: wrong_password) }
+
+      it 'responses with a 404 and an error message' do
+        post '/login', params.to_json
+
+        expect(last_response.status).to eq(401)
+        expect(last_response.body).to include('Invalid username or password')
+      end
+    end
+
+    context 'when logging in a valid user' do
+      let!(:user) { User.create!(username: 'user_one', password: password_digest) }
+
+      it 'responses with a 200 and the validated user' do
+        post '/login', params.to_json
+
+        expect(last_response.status).to eq(200)
+      end
     end
   end
 end
