@@ -11,9 +11,9 @@ gem 'rack', '~> 2.0'
 gem 'rack-test', '~> 1.1'
 gem 'rake'
 gem 'rspec', '~> 3.9'
-gem 'sinatra', '~> 2.0', '>= 2.0.8.1'
+gem 'sinatra', '~> 2.2'
 gem 'sinatra-activerecord', '~> 2.0', '>= 2.0.14'
-gem 'sinatra-contrib', '~> 2.0', '>= 2.0.8.1'
+gem 'sinatra-contrib', '~> 2.2'
 
 group :development do
   gem 'guard-rspec', '4.7.3'
